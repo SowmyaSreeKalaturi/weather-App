@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="weather.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="search-box">
+                <input type="text" placeholder="Enter your location" class="input-box">
+
+                <button class="search-button" id="searchBtn"><img src="https://webstockreview.net/images/google-search-png-10.png" alt="search"></button>
+            </div>
+        </div>
+
+        <div class="location-not-found">
+            <h1 style="color: red;">Sorry, Location not found!!!</h1>
+            <img src="https://res.cloudinary.com/dfvpelp6z/image/upload/v1720268194/404_kqog2d.png" alt="404 Error">
+        </div>
+
+        <div class="weather-body">
+            <img src="https://res.cloudinary.com/dfvpelp6z/image/upload/v1720268195/rain_gydt3f.png" alt="Weather Image" class="weather-img">
+
+            <div class="weather-box">
+                <p class="temperature">0 <sup>°C</sup></p>
+                <p class="description">light rain</p>
+            </div>
+
+            <div class="weather-details">
+                <div class="humidity">
+                    <img src="https://cdn-icons-png.flaticon.com/512/219/219816.png" alt="humididty img">
+                    <div class="text">
+                        <span id="humidity">45%</span>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+
+                <div class="wind">
+                   <img src="https://www.svgrepo.com/show/61395/wind-sign.svg" alt="wind img">
+                    <div class="text">
+                        <span id="wind-speed">12Km/h</span>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+  
+</body>
+<script>
+
+const inputBox = document.querySelector('.input-box');
+const searchBtn = document.getElementById('searchBtn');
+const weather_img = document.querySelector('.weather-img');
+const temperature = document.querySelector('.temperature');
+const description = document.querySelector('.description');
+const humidity = document.getElementById('humidity');
+const wind_speed = document.getElementById('wind-speed');
+
+const location_not_found = document.querySelector('.location-not-found');
+
+const weather_body = document.querySelector('.weather-body');
+
+
+async function checkWeather(city){
+    const api_key = "7aeeee05ac2fcdf03c07a3d1c7f761bc";
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${api_key}`;
+
+    const weather_data = await fetch(`${url}`).then(response => response.json());
+
+
+    if(weather_data.cod === `404`){
+        location_not_found.style.display = "flex";
+        weather_body.style.display = "none";
+        console.log("error");
+        return;
+    }
+
+    console.log("run");
+    location_not_found.style.display = "none";
+    weather_body.style.display = "flex";
+    temperature.innerHTML = `${Math.round(weather_data.main.temp - 273.15)}°C`;
+    description.innerHTML = `${weather_data.weather[0].description}`;
+
+    humidity.innerHTML = `${weather_data.main.humidity}%`;
+    wind_speed.innerHTML = `${weather_data.wind.speed}Km/h`;
+
+
+    switch(weather_data.weather[0].main){
+        case 'Clouds':
+            weather_img.src = "https://res.cloudinary.com/dfvpelp6z/image/upload/v1720268195/cloud_rjlmpu.png";
+            break;
+        case 'Clear':
+            weather_img.src = "https://res.cloudinary.com/dfvpelp6z/image/upload/v1720268194/clear_x9tvzw.png";
+            break;
+        case 'Rain':
+            weather_img.src = "https://res.cloudinary.com/dfvpelp6z/image/upload/v1720268195/rain_gydt3f.png";
+            break;
+        case 'Mist':
+            weather_img.src = "https://res.cloudinary.com/dfvpelp6z/image/upload/v1720268196/mist_psa4dt.png";
+            break;
+        case 'Snow':
+            weather_img.src = "https://res.cloudinary.com/dfvpelp6z/image/upload/v1720268213/snow_spcfyd.png";
+            break;
+
+    }
+
+    console.log(weather_data);
+}
+
+
+searchBtn.addEventListener('click', ()=>{
+    checkWeather(inputBox.value);
+});
+</script>
+</html>
